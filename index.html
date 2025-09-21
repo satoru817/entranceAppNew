@@ -34,7 +34,10 @@
       href="icons/splash-1125x2436.png"
       media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)"
     />
-    <script src="js/main.js" type="module"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.js" crossorigin="anonymous"></script>
+
+    <script src="js/main.js" type="module"></script>
   </head>
   <body>
     <div class="container">
@@ -52,6 +55,29 @@
 
       <!-- UID読み取り画面への遷移ボタン -->
       <a href="uid-reader.html" class="navigation-button">カードUID読み取り</a>
+    </div>
+    <!-- user must login to use this website or app-->
+    <div class="modal" tabindex="-1" id="login_modal" data-bs-backdrop="static" data-bs-keyboard="false">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">ログインが必要です</h5>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="mb-3">
+                <label for="email_input" class="form-label">Email address</label>
+                <input type="email" class="form-control" id="email_input" aria-describedby="emailHelp" required>
+              </div>
+              <div class="mb-3">
+                <label for="password_input" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password_input" required>
+              </div>
+              <button type="submit" class="btn btn-primary" id="login_form_submit">Submit</button>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
   </body>
 </html>

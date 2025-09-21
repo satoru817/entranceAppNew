@@ -1,18 +1,24 @@
+import {ATTENDANCE_TOGGLE_API_ENDPOINT} from "./constant.js";
+import {doPost} from "./fetchElf.js";
+import {userLogin} from "./login.js";
 // Service Workerの登録
-if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-        navigator.serviceWorker
-            .register("./service-worker.js")
-            .then((registration) => {
-                console.log("ServiceWorker登録成功: ", registration.scope);
-            })
-            .catch((err) => {
-                console.log("ServiceWorker登録失敗: ", err);
-            });
-    });
-}
+// if ("serviceWorker" in navigator) {
+//     window.addEventListener("load", () => {
+//         navigator.serviceWorker
+//             .register("./service-worker.js")
+//             .then((registration) => {
+//                 console.log("ServiceWorker登録成功: ", registration.scope);
+//             })
+//             .catch((err) => {
+//                 console.log("ServiceWorker登録失敗: ", err);
+//             });
+//     });
+// }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async() => {
+    if (!await userLogin()) {
+        return;
+    }
     // 要素の取得
     const statusBox = document.getElementById("status");
     const toggleScanButton = document.getElementById("toggleScanButton");
@@ -35,10 +41,6 @@ document.addEventListener("DOMContentLoaded", () => {
         success: "./sounds/success.mp3",
         error: "./sounds/error.mp3",
     };
-
-    // APIエンドポイント
-    const API_ENDPOINT =
-        "https://shoei-549678050196.asia-northeast1.run.app/api/attendance";
 
     // 自動的にNFCスキャンを開始
     startNfcScan();
@@ -170,16 +172,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             // APIリクエスト
-            const response = await fetch(API_ENDPOINT, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ cardId }),
-            });
-
-            const data = await response.json();
-
+            const data = await doPost(ATTENDANCE_TOGGLE_API_ENDPOINT, {cardId});
             if (data.success) {
                 const action = data.type === "ENTRY" ? "入室" : "退室";
                 updateStatus(
