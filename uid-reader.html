@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NFCカードUID読取</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        text-align: center;
+      }
+      .card {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px 0;
+        background-color: #f9f9f9;
+      }
+      .uid-display {
+        font-family: monospace;
+        font-size: 24px;
+        margin: 20px 0;
+        padding: 10px;
+        background-color: #eee;
+        border-radius: 4px;
+      }
+      button {
+        background-color: #4285f4;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        font-size: 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin: 10px;
+      }
+      .status {
+        margin: 10px 0;
+        font-weight: bold;
+      }
+      .success {
+        color: green;
+      }
+      .error {
+        color: red;
+      }
+      .reading {
+        color: blue;
+      }
+
+      .history {
+        text-align: left;
+        margin-top: 30px;
+        border-top: 1px solid #ddd;
+        padding-top: 20px;
+      }
+      .history-item {
+        padding: 8px;
+        border-bottom: 1px solid #eee;
+      }
+    </style>
+    <script type="module" src="js/uid-reader.js"></script>
+  </head>
+  <body>
+    <h1>NFCカードUID読取</h1>
+
+    <div class="card">
+      <div id="status" class="status">ボタンをクリックしてNFC読取を開始</div>
+      <div id="uid" class="uid-display">-</div>
+      <button id="scanButton">NFC読取開始</button>
+      <button id="copyButton">UIDをコピー</button>
+
+      <!-- UID読み取り画面への遷移ボタン -->
+      <a href="uid-reader.html" class="navigation-button">カードUID読み取り</a>
+    </div>
+
+    <div class="history">
+      <h3>読取履歴</h3>
+      <div id="historyList"></div>
+    </div>
+  </body>
+</html>

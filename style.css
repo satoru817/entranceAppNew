@@ -1,0 +1,125 @@
+/* style.css */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* 遷移ボタン用スタイル */
+.navigation-button {
+  display: inline-block;
+  background-color: #6c757d;
+  color: white;
+  text-decoration: none;
+  padding: 12px 24px;
+  border-radius: 4px;
+  margin: 8px;
+  font-size: 16px;
+}
+
+.navigation-button:hover {
+  background-color: #5a6268;
+}
+
+.container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: center;
+}
+
+.status-box {
+  padding: 20px;
+  margin: 20px 0;
+  border-radius: 8px;
+  background-color: #f0f0f0;
+}
+
+.scanning {
+  background-color: #e8f4ff;
+  border: 2px solid #4a90e2;
+}
+
+.success {
+  background-color: #d4edda;
+  border: 2px solid #28a745;
+}
+
+.error {
+  background-color: #f8d7da;
+  border: 2px solid #dc3545;
+}
+
+button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 4px;
+  margin: 8px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.primary-button {
+  background-color: #4a90e2;
+  color: white;
+}
+
+.secondary-button {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+/* オフライン表示用 */
+.hidden {
+  display: none;
+}
+
+#offline-message {
+  background-color: #ff9800;
+  color: white;
+  padding: 8px;
+  border-radius: 4px;
+  margin-top: 10px;
+}
+
+/* インストール促進バナー（オプション） */
+.install-banner {
+  background-color: #4a90e2;
+  color: white;
+  padding: 10px;
+  margin-top: 20px;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.install-button {
+  background-color: white;
+  color: #4a90e2;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* モバイル端末での表示最適化 */
+@media (max-width: 500px) {
+  .container {
+    padding: 10px;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  .status-box {
+    padding: 15px;
+    margin: 10px 0;
+  }
+
+  button {
+    width: 100%;
+    margin: 5px 0;
+  }
+}
