@@ -26,10 +26,9 @@ export const userLogin = async() => {
 
         if (!isValid) {
             alert("認証情報が間違っています");
-            return false;
+            return;
         }
 
         loginModal.hide()
-        return true;
     });
 }

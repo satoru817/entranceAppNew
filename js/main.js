@@ -16,9 +16,7 @@ import {userLogin} from "./login.js";
 // }
 
 document.addEventListener("DOMContentLoaded", async() => {
-    if (!await userLogin()) {
-        return;
-    }
+    await userLogin();
     // 要素の取得
     const statusBox = document.getElementById("status");
     const toggleScanButton = document.getElementById("toggleScanButton");
