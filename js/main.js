@@ -2,18 +2,18 @@ import {ATTENDANCE_TOGGLE_API_ENDPOINT} from "./constant.js";
 import {doPost} from "./fetchElf.js";
 import {userLogin} from "./login.js";
 // Service Workerの登録
-// if ("serviceWorker" in navigator) {
-//     window.addEventListener("load", () => {
-//         navigator.serviceWorker
-//             .register("./service-worker.js")
-//             .then((registration) => {
-//                 console.log("ServiceWorker登録成功: ", registration.scope);
-//             })
-//             .catch((err) => {
-//                 console.log("ServiceWorker登録失敗: ", err);
-//             });
-//     });
-// }
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+        navigator.serviceWorker
+            .register("./service-worker.js")
+            .then((registration) => {
+                console.log("ServiceWorker登録成功: ", registration.scope);
+            })
+            .catch((err) => {
+                console.log("ServiceWorker登録失敗: ", err);
+            });
+    });
+}
 
 document.addEventListener("DOMContentLoaded", async() => {
     await userLogin();
