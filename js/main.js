@@ -16,7 +16,7 @@ if ("serviceWorker" in navigator) {
 }
 
 document.addEventListener("DOMContentLoaded", async() => {
-    await userLogin();
+    userLogin();
     // 要素の取得
     const statusBox = document.getElementById("status");
     const toggleScanButton = document.getElementById("toggleScanButton");
