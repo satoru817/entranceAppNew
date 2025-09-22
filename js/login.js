@@ -6,7 +6,8 @@ export const userLogin = () => {
     const emailInput = document.getElementById('email_input');
     const passwordInput = document.getElementById('password_input');
     const submitBtn = document.getElementById('login_form_submit');
-    submitBtn.addEventListener('click', async() => {
+    submitBtn.addEventListener('click', async(e) => {
+        e.preventDefault();
         const data = {
             email: emailInput.value.trim(),
             password: passwordInput.value.trim()
