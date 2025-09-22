@@ -60,7 +60,7 @@ export async function doFetch(url, method, data, callback, callIfFailed = null)
 }
 export async function doPost(url, data)
 {
-    await _fetch(url, 'POST', data);
+    return await _fetch(url, 'POST', data);
 }
 
 export const doGet = async(url) => {

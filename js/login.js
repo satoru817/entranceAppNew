@@ -15,6 +15,8 @@ export const userLogin = () => {
 
         const isValid = await doPost(LOGIN_END_POINT, data);
 
+        console.log(`isValid = ${isValid}`);
+
         if (!isValid) {
             alert("認証情報が間違っています");
             return;
