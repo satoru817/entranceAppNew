@@ -1,9 +1,15 @@
 const CACHE_NAME = "nfc-attendance-v1";
 const urlsToCache = [
-  "./",
-  "./index.html",
-  "./style.css",
-  "./manifest.json"
+    "./",
+    "./index.html",
+    "./style.css",
+    "./manifest.json",
+    "./js/constant.js",
+    "./js/fetchElf.js",
+    "./js/login.js",
+    "./js/main.js",
+    "./js/uid-reader.js",
+    "./uid-reader.html",
 ];
 
 // インストール時にリソースをキャッシュ
