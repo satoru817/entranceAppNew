@@ -22,58 +22,58 @@ self.addEventListener("install", (event) => {
   );
 });
 
-// ネットワークリクエストの処理
-self.addEventListener("fetch", (event) => {
-  event.respondWith(
-    caches
-      .match(event.request)
-      .then((response) => {
-        // キャッシュにヒットしたらそれを返す
-        if (response) {
-          return response;
-        }
+// // ネットワークリクエストの処理
+// self.addEventListener("fetch", (event) => {
+//   event.respondWith(
+//     caches
+//       .match(event.request)
+//       .then((response) => {
+//         // キャッシュにヒットしたらそれを返す
+//         if (response) {
+//           return response;
+//         }
 
-        // オリジナルのリクエストを返す
-        return fetch(event.request).then((response) => {
-          // 有効なレスポンスのみをキャッシュ
-          if (
-            !response ||
-            response.status !== 200 ||
-            response.type !== "basic"
-          ) {
-            return response;
-          }
+//         // オリジナルのリクエストを返す
+//         return fetch(event.request).then((response) => {
+//           // 有効なレスポンスのみをキャッシュ
+//           if (
+//             !response ||
+//             response.status !== 200 ||
+//             response.type !== "basic"
+//           ) {
+//             return response;
+//           }
 
-          // レスポンスを複製（ストリームは一度だけ使用可能なため）
-          const responseToCache = response.clone();
+//           // レスポンスを複製（ストリームは一度だけ使用可能なため）
+//           const responseToCache = response.clone();
 
-          caches.open(CACHE_NAME).then((cache) => {
-            // APIリクエストはキャッシュしない
-            if (!event.request.url.includes("/api/")) {
-              cache.put(event.request, responseToCache);
-            }
-          });
+//           caches.open(CACHE_NAME).then((cache) => {
+//             // APIリクエストはキャッシュしない
+//             if (!event.request.url.includes("/api/")) {
+//               cache.put(event.request, responseToCache);
+//             }
+//           });
 
-          return response;
-        });
-      })
-      .catch(() => {
-        // オフライン時などのフォールバック処理
-        if (event.request.url.includes("/api/")) {
-          return new Response(
-            JSON.stringify({
-              success: false,
-              message:
-                "オフラインモードです。ネットワーク接続を確認してください。",
-            }),
-            {
-              headers: { "Content-Type": "application/json" },
-            }
-          );
-        }
-      })
-  );
-});
+//           return response;
+//         });
+//       })
+//       .catch(() => {
+//         // オフライン時などのフォールバック処理
+//         if (event.request.url.includes("/api/")) {
+//           return new Response(
+//             JSON.stringify({
+//               success: false,
+//               message:
+//                 "オフラインモードです。ネットワーク接続を確認してください。",
+//             }),
+//             {
+//               headers: { "Content-Type": "application/json" },
+//             }
+//           );
+//         }
+//       })
+//   );
+// });
 
 // 古いキャッシュの削除
 self.addEventListener("activate", (event) => {
