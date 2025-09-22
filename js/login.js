@@ -1,12 +1,11 @@
 import {doPost} from "./fetchElf.js";
 import {LOGIN_END_POINT} from "./constant.js";
-const loginModal = new bootstrap.Modal(document.getElementById('login_modal'));
-const emailInput = document.getElementById('email_input');
-const passwordInput = document.getElementById('password_input');
-const submitBtn = document.getElementById('login_form_submit');
-
 
 export const userLogin = () => {
+    const loginModal = new bootstrap.Modal(document.getElementById('login_modal'));
+    const emailInput = document.getElementById('email_input');
+    const passwordInput = document.getElementById('password_input');
+    const submitBtn = document.getElementById('login_form_submit');
     submitBtn.addEventListener('click', async() => {
         const data = {
             email: emailInput.value.trim(),
@@ -22,6 +21,6 @@ export const userLogin = () => {
 
         loginModal.hide()
     });
-    
+
     loginModal.show();
 }
