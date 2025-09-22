@@ -5,17 +5,8 @@ const emailInput = document.getElementById('email_input');
 const passwordInput = document.getElementById('password_input');
 const submitBtn = document.getElementById('login_form_submit');
 
-const validateBothAndChangeBtnStatus = (el1, el2, btn) => {
-    if (el1.value.trim() && el2.value.trim()) {
-        btn.enabled = true;
-    }
-    else {
-        btn.enabled =false;
-    }
-}
 
 export const userLogin = () => {
-    loginModal.show();
     submitBtn.addEventListener('click', async() => {
         const data = {
             email: emailInput.value.trim(),
@@ -31,4 +22,6 @@ export const userLogin = () => {
 
         loginModal.hide()
     });
+    
+    loginModal.show();
 }
