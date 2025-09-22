@@ -14,7 +14,7 @@ const validateBothAndChangeBtnStatus = (el1, el2, btn) => {
     }
 }
 
-export const userLogin = async() => {
+export const userLogin = () => {
     loginModal.show();
     submitBtn.addEventListener('click', async() => {
         const data = {
