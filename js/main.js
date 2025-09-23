@@ -1,6 +1,8 @@
 import {ATTENDANCE_TOGGLE_API_ENDPOINT} from "./constant.js";
 import {doPost} from "./fetchElf.js";
 import {userLogin} from "./login.js";
+import {emailInput} from "./login.js";
+import {passwordInput} from "./login.js";
 // Service Workerの登録
 if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
@@ -17,6 +19,21 @@ if ("serviceWorker" in navigator) {
 
 document.addEventListener("DOMContentLoaded", async() => {
     userLogin();
+    const cardIdScanBtn = document.getElementById('cardIdScan');
+    cardIdScanBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const loginModal = document.getElementById('login_modal');
+        console.log(`loginModal = ${JSON.stringify(loginModal)}`);
+
+        loginModal.addEventListener('hidden.bs.modal', e => {
+            const email = emailInput.value.trim();
+            const password = passwordInput.value.trim();
+            // this is tricky... handing authentication information using query parameter
+            // be sure to get this in the html
+            location.href = `uid-reader.html?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
+        });
+        userLogin();
+    })
     // 要素の取得
     const statusBox = document.getElementById("status");
     const toggleScanButton = document.getElementById("toggleScanButton");

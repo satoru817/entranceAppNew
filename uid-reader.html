@@ -27,16 +27,6 @@
         background-color: #eee;
         border-radius: 4px;
       }
-      button {
-        background-color: #4285f4;
-        color: white;
-        border: none;
-        padding: 12px 20px;
-        font-size: 16px;
-        border-radius: 4px;
-        cursor: pointer;
-        margin: 10px;
-      }
       .status {
         margin: 10px 0;
         font-weight: bold;
@@ -62,7 +52,9 @@
         border-bottom: 1px solid #eee;
       }
     </style>
-    <script type="module" src="js/uid-reader.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.js" crossorigin="anonymous" defer></script>
+    <script type="module" src="js/uid-reader.js" defer></script>
   </head>
   <body>
     <h1>NFCカードUID読取</h1>
@@ -70,16 +62,42 @@
     <div class="card">
       <div id="status" class="status">ボタンをクリックしてNFC読取を開始</div>
       <div id="uid" class="uid-display">-</div>
-      <button id="scanButton">NFC読取開始</button>
-      <button id="copyButton">UIDをコピー</button>
-
-      <!-- UID読み取り画面への遷移ボタン -->
-      <a href="uid-reader.html" class="navigation-button">カードUID読み取り</a>
+      <button id="scanButton" class="btn btn-secondary m-2">NFC読取開始</button>
+      <button id="copyButton" class="btn btn-info m-2">UIDをコピー</button>
+      <button id="registrationBtn" class="btn btn-primary m-2">UIRを生徒に紐付け</button>
     </div>
 
     <div class="history">
       <h3>読取履歴</h3>
       <div id="historyList"></div>
+    </div>
+
+    <div class="modal" tabindex="-1" id="cardId_registration_modal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">生徒に紐づけてcardIdを登録しましょう</h5>
+          </div>
+          <div class="modal-body">
+            <form>
+                <div class="form-group">
+                  <label for="cramSchoolSelection">校舎選択</label>
+                  <select class="form-control" id="cramSchoolSelection">
+                    <!-- create inside based on fetched data-->
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="studentSelection">生徒選択</label>
+                  <select class="form-control" id="studentSelection">
+                    <option value="null">まず校舎を選択してください</option>
+                    <!-- create inside this based on the cramSchool selection-->
+                  </select>
+                </div>                
+              <button class="btn btn-primary m-2" id="login_form_submit">Submit</button>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
   </body>
 </html>

@@ -10,6 +10,8 @@ const urlsToCache = [
     "./js/main.js",
     "./js/uid-reader.js",
     "./uid-reader.html",
+    "https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css",
+    "https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.js"
 ];
 
 // インストール時にリソースをキャッシュ

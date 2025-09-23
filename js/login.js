@@ -1,11 +1,11 @@
 import {doPost} from "./fetchElf.js";
-import {LOGIN_END_POINT} from "./constant.js";
+import {GET_STUDENT_API_END_POINT, LOGIN_END_POINT} from "./constant.js";
+const loginModal = new bootstrap.Modal(document.getElementById('login_modal'));
+export const emailInput = document.getElementById('email_input');
+export const passwordInput = document.getElementById('password_input');
+const submitBtn = document.getElementById('login_form_submit');
 
 export const userLogin = () => {
-    const loginModal = new bootstrap.Modal(document.getElementById('login_modal'));
-    const emailInput = document.getElementById('email_input');
-    const passwordInput = document.getElementById('password_input');
-    const submitBtn = document.getElementById('login_form_submit');
     submitBtn.addEventListener('click', async(e) => {
         e.preventDefault();
         const data = {
@@ -22,7 +22,7 @@ export const userLogin = () => {
             return;
         }
 
-        loginModal.hide()
+        loginModal.hide();
     });
 
     loginModal.show();

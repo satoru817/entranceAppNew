@@ -54,7 +54,9 @@
       <div id="scanStatus" class="scan-status active">スキャン実行中</div>
 
       <!-- UID読み取り画面への遷移ボタン -->
-      <a href="uid-reader.html" class="navigation-button">カードUID読み取り</a>
+       <!-- TODO: cardIDをスキャンするhrefをクリックした時にuserLogin()を再実行。　生徒情報を同時に撮ってきてglobal scopeに登録-->
+      <a href="uid-reader.html" class="navigation-button" >カードUID読み取り</a>
+      <button class="navigation-button" id="cardIdScan">カードUID読み取り登録</button>
     </div>
     <!-- user must login to use this website or app-->
     <div class="modal" tabindex="-1" id="login_modal" data-bs-backdrop="static" data-bs-keyboard="false">

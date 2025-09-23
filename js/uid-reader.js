@@ -1,9 +1,93 @@
-document.addEventListener("DOMContentLoaded", () => {
+import { doScan } from "./scanElf.js";
+import { doPost } from "./fetchElf.js";
+import { GET_STUDENT_API_END_POINT } from "./constant.js";
+
+export const getParams = () => {
+    const queryString = window.location.search;
+    console.log(`queryString = ${queryString}`);
+    return new URLSearchParams(queryString);
+}
+
+export const getStudentList = async(email, password) => {
+    const data = {email, password};
+    const students = await doPost(GET_STUDENT_API_END_POINT, data);
+    console.log(`students = ${students}`);
+    return students;
+}
+
+document.addEventListener("DOMContentLoaded", async() => {
+
     const status = document.getElementById("status");
     const uidDisplay = document.getElementById("uid");
     const scanButton = document.getElementById("scanButton");
     const copyButton = document.getElementById("copyButton");
     const historyList = document.getElementById("historyList");
+
+    const params = getParams();
+    const email = params.get('email');
+    const password = params.get('password');
+    const students = await getStudentList(email, password);
+    // public class StudentCardIdRegistrationDTO {
+    //     private String cramSchoolName;
+    //     private List<StudentInfo> studentInfos;
+    // }
+    // public class StudentInfo{
+    //     private Integer studentId;
+    //     private String studentName;
+    //     private String gradeStr;
+    //     private String cardId;
+    //     public boolean isCardIdSet() {
+    //         return cardId != null && !cardId.equals("");
+    //     }
+    // }
+
+    const cardIdRegistrationModal = document.getElementById('cardId_registration_modal');
+    const cramSchoolSelection = document.getElementById('cramSchoolSelection');
+    const studentSelection = document.getElementById('studentSelection');
+    const cramSchools = [...students].map(s => s.cramSchoolName);
+    cramSchoolSelection.innerHTML = cramSchools.map(name => `<option value=${name}>${name}</option>`).join('');
+    const createOptionsFromStudentInfos = (studentInfos) => {
+        return studentInfos.map(studentInfo =>
+            `<option value='${studentInfo.studentName}' data-student-id=${studentInfo.studnetId} class=${studentInfo.cardId ? "text-success" : "text-danger"}>${studentInfo.studentName} ${studentInfo.cardId ? '設定ずみ' : '未設定' } ${studentInfo.cardId}</option>`
+        ).join('');
+    }
+
+    if (cramSchools.length === 1) {
+        studentSelection.innerHTML = createOptionsFromStudentInfos(students[0].studentInfos);
+    }
+
+    cardIdRegistrationModal.addEventListener('show.bs.modal', (e) => {
+        cramSchoolSelection.addEventListener('change', (e) => {
+            const selectedCramSchoolName = e.target.value;
+            console.log(`selected cramSchool = ${selectedCramSchoolName}`);
+            const relatedStudents = students.filter(dto => dto.cramSchoolName === selectedCramSchoolName)[0].studentInfos;
+            studentSelection.innerHTML = createOptionsFromStudentInfos(relatedStudents);
+        });
+
+        studentSelection.addEventListener('change', async(e) => {
+            const studentName = e.target.value;
+            if (confirm(`${studentName}にカードを紐づけますか？\n紐づけるつもりならカードをかざしてください。`)) {
+               const uid = await doScan();
+               // todo: validate uid and show message or something?
+               if (confirm(`${studentName}にカードID${uid}を紐づけますか？`)){
+
+                    // TODO: send data to server-side
+                    // if successful update students
+               }
+            }
+            else {
+                // what should I do here?
+            }
+
+        });
+    });
+
+    const registrationBtn = document.getElementById('registrationBtn');
+    registrationBtn.addEventListener('click', () => {
+        new bootstrap.Modal(cardIdRegistrationModal).show();
+    })
+
+    // TODO: create modal
 
     let currentUID = null;
 
