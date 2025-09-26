@@ -1,6 +1,7 @@
 import { doScan } from "./scanElf.js";
 import { doPost } from "./fetchElf.js";
 import { GET_STUDENT_API_END_POINT, SET_STUDENT_CARDID_END_POINT } from "./constant.js";
+import {AUDIO, playSound} from "./audio.js";
 
 export const getParams = () => {
     const queryString = window.location.search;
@@ -69,31 +70,30 @@ document.addEventListener("DOMContentLoaded", async() => {
             const studentId = e.target.dataset.studentId;
             const cardId = e.target.dataset.cardId;
             if (confirm(`${studentName}にカードを紐づけますか？\n紐づけるつもりならカードをかざしてください。`)) {
-               const _serialNumber = null;
                const ndefReader = new NDEFReader();
+               await ndefReader.scan();
                ndefReader.addEventListener('reading', ({serialNumber}) => {
-                   if (serialNumber) {
-                       _serialNumber = serialNumber;
+                   playSound(AUDIO.success);
+                   if (serialNumber && cardId !== serialNumber) {
+                       if (confirm(`${studentName}にカードID${serialNumber}を紐づけますか？`)){
+                           const data = {studentId, serialNumber};
+                           const success = await doPost(SET_STUDENT_CARDID_END_POINT, data);
+                           if (success) {
+                               playSound(AUDIO.success);
+                               const relatedOption = document.getElementById(`option_${studentId}`);
+                               relatedOption.outerHTML = `<option id=option_${studentId} value='${studentName}' data-card-id=${serialNumber} data-student-id=${studentId} "text-success" >${studentName}  '設定ずみ'  ${serialNumber}</option>`
+                               alert(`${studentName}にカードID${serialNumber}を正常に紐づけられました.`);
+                           }
+                           else {
+                               alert("カードの紐付けに失敗しました");
+                           }
+                       }
+                   }
+                   else {
+                       alert(`このカードID${_serialNumber}が既にこの生徒${studentName}と紐づいています。`);
                    }
                });
-               await ndefReader.scan();
 
-               if (_serialNumber && cardId !== _serialNumber) {
-                   if (confirm(`${studentName}にカードID${_serialNumber}を紐づけますか？`)){
-                        const data = {studentId, serialNumber: _serialNumber};
-                        const success = await doPost(SET_STUDENT_CARDID_END_POINT, data);
-                        if (success) {
-                            const relatedOption = document.getElementById(`option_${studentId}`);
-                            relatedOption.outerHTML = `<option id=option_${studentId} value='${studentName}' data-card-id=${_serialNumber} data-student-id=${studentId} "text-success" >${studentName}  '設定ずみ'  ${_serialNumber}</option>`
-                        }
-                        else {
-                            alert("カードの紐付けに失敗しました");
-                        }
-                   }
-               }
-               else {
-                   alert(`このカードID${_serialNumber}が既にこの生徒${studentName}と紐づいています。`);
-               }
             }
         });
     });

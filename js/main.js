@@ -3,6 +3,7 @@ import {doPost} from "./fetchElf.js";
 import {userLogin} from "./login.js";
 import {emailInput} from "./login.js";
 import {passwordInput} from "./login.js";
+import {AUDIO, playSound} from "./audio.js";
 // Service Workerの登録
 if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
@@ -49,13 +50,6 @@ document.addEventListener("DOMContentLoaded", async() => {
     // スキャン状態のタイムアウト
     const SCAN_TIMEOUT = 5000;
     const ERROR_TIMEOUT = 3000;
-
-    // オーディオファイル
-    const AUDIO = {
-        beep: "./sounds/beep.mp3",
-        success: "./sounds/success.mp3",
-        error: "./sounds/error.mp3",
-    };
 
     // 自動的にNFCスキャンを開始
     startNfcScan();
@@ -153,17 +147,6 @@ document.addEventListener("DOMContentLoaded", async() => {
     function updateScanStatus(message, className) {
         scanStatus.textContent = message;
         scanStatus.className = `scan-status ${className}`;
-    }
-
-    /**
-     * 音を再生する
-     * @param {string} soundPath - 音声ファイルのパス
-     */
-    function playSound(soundPath) {
-        const audio = new Audio(soundPath);
-        audio
-            .play()
-            .catch((e) => console.log("音の再生ができませんでした", e));
     }
 
     /**
