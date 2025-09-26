@@ -1,6 +1,6 @@
 import { doScan } from "./scanElf.js";
 import { doPost } from "./fetchElf.js";
-import { GET_STUDENT_API_END_POINT } from "./constant.js";
+import { GET_STUDENT_API_END_POINT, SET_STUDENT_CARDID_END_POINT } from "./constant.js";
 
 export const getParams = () => {
     const queryString = window.location.search;
@@ -48,7 +48,8 @@ document.addEventListener("DOMContentLoaded", async() => {
     cramSchoolSelection.innerHTML = cramSchools.map(name => `<option value=${name}>${name}</option>`).join('');
     const createOptionsFromStudentInfos = (studentInfos) => {
         return studentInfos.map(studentInfo =>
-            `<option value='${studentInfo.studentName}' data-student-id=${studentInfo.studnetId} class=${studentInfo.cardId ? "text-success" : "text-danger"}>${studentInfo.studentName} ${studentInfo.cardId ? '設定ずみ' : '未設定' } ${studentInfo.cardId}</option>`
+            `<option id=option_${studentInfo.studentId} value='${studentInfo.studentName}' data-card-id=${studentInfo.cardId} data-student-id=${studentInfo.studentId} class=${studentInfo.cardId ? "text-success" : "text-danger"}>${studentInfo.studentName} ${studentInfo.cardId ? '設定ずみ' : '未設定' } ${studentInfo.cardId}</option>`
+    }
         ).join('');
     }
 
@@ -66,19 +67,35 @@ document.addEventListener("DOMContentLoaded", async() => {
 
         studentSelection.addEventListener('change', async(e) => {
             const studentName = e.target.value;
+            const studentId = e.target.dataset.studentId;
+            const cardId = e.target.dataset.cardId;
             if (confirm(`${studentName}にカードを紐づけますか？\n紐づけるつもりならカードをかざしてください。`)) {
-               const uid = await doScan();
-               // todo: validate uid and show message or something?
-               if (confirm(`${studentName}にカードID${uid}を紐づけますか？`)){
-
-                    // TODO: send data to server-side
-                    // if successful update students
+               const _serialNumber = null;
+               const ndefReader = new NDEFReader();
+               ndefReader.addEventListener('reading', ({serialNumber}) => {
+                   if (serialNumber) {
+                       _serialNumber = serialNumber;
+                   }
+               });
+               await ndefReader.scan();
+               
+               if (_serialNumber && cardId !== _serialNumber) {
+                   if (confirm(`${studentName}にカードID${_serialNumber}を紐づけますか？`)){
+                        const data = {studentId, serialNumber: _serialNumber};
+                        const success = await doPost(SET_STUDENT_CARDID_END_POINT, data);
+                        if (success) {
+                            const relatedOption = document.getElementById(`option_${studentId}`);
+                            relatedOption.outerHTML = `<option id=option_${studentId} value='${studentName}' data-card-id=${_serialNumber} data-student-id=${studentId} "text-success" >${studentName}  '設定ずみ'  ${_serialNumber}</option>`
+                        }
+                        else {
+                            alert("カードの紐付けに失敗しました");
+                        }
+                   }
+               }
+               else {
+                   alert(`このカードID${_serialNumber}が既にこの生徒${studentName}と紐づいています。`);
                }
             }
-            else {
-                // what should I do here?
-            }
-
         });
     });
 
