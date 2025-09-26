@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", async() => {
             if (confirm(`${studentName}にカードを紐づけますか？\n紐づけるつもりならカードをかざしてください。`)) {
                const ndefReader = new NDEFReader();
                await ndefReader.scan();
-               ndefReader.addEventListener('reading', ({serialNumber}) => {
+               ndefReader.addEventListener('reading', async ({serialNumber}) => {
                    playSound(AUDIO.success);
                    if (serialNumber && cardId !== serialNumber) {
                        if (confirm(`${studentName}にカードID${serialNumber}を紐づけますか？`)){
