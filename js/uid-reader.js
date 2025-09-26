@@ -49,7 +49,6 @@ document.addEventListener("DOMContentLoaded", async() => {
     const createOptionsFromStudentInfos = (studentInfos) => {
         return studentInfos.map(studentInfo =>
             `<option id=option_${studentInfo.studentId} value='${studentInfo.studentName}' data-card-id=${studentInfo.cardId} data-student-id=${studentInfo.studentId} class=${studentInfo.cardId ? "text-success" : "text-danger"}>${studentInfo.studentName} ${studentInfo.cardId ? '設定ずみ' : '未設定' } ${studentInfo.cardId}</option>`
-    }
         ).join('');
     }
 
@@ -78,7 +77,7 @@ document.addEventListener("DOMContentLoaded", async() => {
                    }
                });
                await ndefReader.scan();
-               
+
                if (_serialNumber && cardId !== _serialNumber) {
                    if (confirm(`${studentName}にカードID${_serialNumber}を紐づけますか？`)){
                         const data = {studentId, serialNumber: _serialNumber};
