@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", async() => {
 
     const updateStudents = (studentId, newCardId) => {
         const selectedCramSchool = cramSchoolSelection.value;
-        const curr = students.filter(s => s.cramSchoolName === selectedCramSchool).studentInfos.filter(s => s.studentId === studentId);
+        const curr = students.find(s => s.cramSchoolName === selectedCramSchool).studentInfos.find(s => s.studentId === studentId);
         curr.cardId = newCardId;
         curr.cardIdSet = !!newCardId;
     }
@@ -90,9 +90,9 @@ document.addEventListener("DOMContentLoaded", async() => {
                            // if failed then doPost will early-return;
                            if (success) {
                                playSound(AUDIO.success);
-                               //updateStudents(studentId, serialNumber);
+                               updateStudents(studentId, serialNumber);
                                const relatedOption = document.getElementById(`option_${studentId}`);
-                               relatedOption.outerHTML = `<option id=option_${studentId} value='${studentName}' data-card-id='${serialNumber}' data-student-id=${studentId} class=text-success >${studentName}  '設定ずみ'  ${serialNumber}</option>`
+                               relatedOption.outerHTML = `<option id=option_${studentId} value='${studentId}' data-student-name='${studentName}' data-card-id='${serialNumber}' data-student-id=${studentId} class=text-success >${studentName}  '設定ずみ'  ${serialNumber}</option>`
                                alert(`${studentName}にカードID${serialNumber}を正常に紐づけられました.`);
                            }
                            else {
