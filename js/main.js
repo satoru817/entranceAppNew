@@ -54,8 +54,8 @@ document.addEventListener("DOMContentLoaded", async() => {
     const SCAN_TIMEOUT = 5000;
     const ERROR_TIMEOUT = 3000;
 
-    // 自動的にNFCスキャンを開始
-    startNfcScan();
+    // 自動的にNFCスキャンを開始しないでおこう
+    //startNfcScan();
 
     /**
      * NFC読み取りを開始する
