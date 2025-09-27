@@ -16,6 +16,8 @@ export const getStudentList = async(email, password) => {
     return students;
 }
 
+let selectedCramSchoolName = null;
+
 document.addEventListener("DOMContentLoaded", async() => {
 
     const status = document.getElementById("status");
@@ -36,8 +38,11 @@ document.addEventListener("DOMContentLoaded", async() => {
     const cramSchoolSelection = document.getElementById('cramSchoolSelection');
 
     const updateStudents = (studentId, newCardId) => {
-        const selectedCramSchool = cramSchoolSelection.value;
-        const curr = students.find(s => s.cramSchoolName === selectedCramSchool).studentInfos.find(s => s.studentId === studentId);
+        console.log(`studentId = ${studentId}, newCardId = ${newCardId}`);
+        console.log(`selectedCramScholName = ${selectedCramSchoolName}`);
+        const _students = students.find(s => s.cramSchoolName = selectedCramSchoolName);
+        const _student = _students.studentInfos.find(s => s.studentId === studentId);
+        const curr = students.find(s => s.cramSchoolName === selectedCramSchoolName).studentInfos.find(s => s.studentId === studentId);
         console.log(`curr = ${curr} ,currJson = ${JSON.stringify(curr)}`);
         curr.cardId = newCardId;
         curr.cardIdSet = !!newCardId;
@@ -61,9 +66,10 @@ document.addEventListener("DOMContentLoaded", async() => {
     cardIdRegistrationModal.addEventListener('show.bs.modal', (e) => {
         cramSchoolSelection.addEventListener('change', (e) => {
             if (e.target.value) {
-                const selectedCramSchoolName = e.target.value;
-                console.log(`selected cramSchool = ${selectedCramSchoolName}`);
-                const relatedStudents = students.filter(dto => dto.cramSchoolName === selectedCramSchoolName)[0].studentInfos;
+                const _selectedCramSchoolName = e.target.value;
+                selectedCramSchoolName = _selectedCramSchoolName;
+                console.log(`selected cramSchool = ${_selectedCramSchoolName}`);
+                const relatedStudents = students.filter(dto => dto.cramSchoolName === _selectedCramSchoolName)[0].studentInfos;
                 studentSelection.innerHTML = createOptionsFromStudentInfos(relatedStudents);
             }
         });
