@@ -90,7 +90,7 @@ document.addEventListener("DOMContentLoaded", async() => {
                            // if failed then doPost will early-return;
                            if (success) {
                                playSound(AUDIO.success);
-                               updateStudents(studentId, serialNumber);
+                               //updateStudents(studentId, serialNumber);
                                const relatedOption = document.getElementById(`option_${studentId}`);
                                relatedOption.outerHTML = `<option id=option_${studentId} value='${studentName}' data-card-id='${serialNumber}' data-student-id=${studentId} class=text-success >${studentName}  '設定ずみ'  ${serialNumber}</option>`
                                alert(`${studentName}にカードID${serialNumber}を正常に紐づけられました.`);
