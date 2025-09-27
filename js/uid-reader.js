@@ -73,11 +73,11 @@ document.addEventListener("DOMContentLoaded", async() => {
             const selectedOption = document.getElementById(`option_${studentId}`);
             const studentName = selectedOption.dataset.studentName;
             const cardId = selectedOption.dataset.cardId;
-            if (confirm(`${studentName}にカードを紐づけますか？\n紐づけるつもりならカードをかざしてください。`)) {
+            if (confirm(`${studentName}にカードを紐づけますか？\n紐づけるつもりならOKボタンを押してからカードをかざしてください。`)) {
                 const ndefReader = new NDEFReader();
                 await ndefReader.scan();
                 ndefReader.addEventListener('reading', async ({serialNumber}) => {
-                   playSound(AUDIO.success);
+                   await playSound(AUDIO.success);
                    if (serialNumber && cardId !== serialNumber) {
                        if (confirm(`${studentName}に\nカードID: ${serialNumber}\nを紐づけますか？`)){
                            const data = {email, password, studentId, cardId: serialNumber};
