@@ -40,8 +40,10 @@ document.addEventListener("DOMContentLoaded", async() => {
     const updateStudents = (studentId, newCardId) => {
         console.log(`studentId = ${studentId}, newCardId = ${newCardId}`);
         console.log(`selectedCramScholName = ${selectedCramSchoolName}`);
-        const _students = students.find(s => s.cramSchoolName = selectedCramSchoolName);
+        const _students = students.find(s => s.cramSchoolName === selectedCramSchoolName);
+        console.log(`_students = ${_students} ${JSON.stringify(_students)}`);
         const _student = _students.studentInfos.find(s => s.studentId === studentId);
+        console.log(`_student = ${_student}`);
         const curr = students.find(s => s.cramSchoolName === selectedCramSchoolName).studentInfos.find(s => s.studentId === studentId);
         console.log(`curr = ${curr} ,currJson = ${JSON.stringify(curr)}`);
         curr.cardId = newCardId;
