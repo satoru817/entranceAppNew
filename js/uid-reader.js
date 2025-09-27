@@ -87,14 +87,17 @@ document.addEventListener("DOMContentLoaded", async() => {
                            playSound(AUDIO.success);
                            const data = {email, password, studentId, cardId: serialNumber};
                            const success = await doPost(SET_STUDENT_CARDID_END_POINT, data);
+                           console.log("success" + ${success});
                            // if failed then doPost will early-return;
                            if (success) {
+                               console.log("successの中にはいます");
                                updateStudents(studentId, serialNumber);
                                const relatedOption = document.getElementById(`option_${studentId}`);
                                relatedOption.outerHTML = `<option id=option_${studentId} value='${studentId}' data-student-name='${studentName}' data-card-id='${serialNumber}' data-student-id=${studentId} class=text-success >${studentName}  '設定ずみ'  ${serialNumber}</option>`
                                alert(`${studentName}にカードID${serialNumber}を正常に紐づけられました.`);
                            }
                            else {
+                               console.log("successの中にいません。");
                                alert(`${studentName}にカードID\n${serialNumber}\nを紐づけるのに失敗しました`)
                            }
                        }
