@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", async() => {
                    playSound(AUDIO.success);
                    if (serialNumber && cardId !== serialNumber) {
                        if (confirm(`${studentName}に\nカードID: ${serialNumber}\nを紐づけますか？`)){
-                           const data = {studentId, cardId};
+                           const data = {studentId, cardId: serialNumber};
                            const success = await doPost(SET_STUDENT_CARDID_END_POINT, data);
                            if (success) {
                                playSound(AUDIO.success);
@@ -80,6 +80,7 @@ document.addEventListener("DOMContentLoaded", async() => {
                                alert(`${studentName}にカードID${serialNumber}を正常に紐づけられました.`);
                            }
                            else {
+                               playSound(AUDIO.error);
                                alert("カードの紐付けに失敗しました");
                            }
                        }
