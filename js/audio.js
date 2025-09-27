@@ -1,7 +1,7 @@
 // オーディオファイル
 export const AUDIO = {
     beep: "./sounds/beep.mp3",
-    success: "./sounds/success.mp3",
+    success: "./sounds/succeed.mp3",
     error: "./sounds/error.mp3",
 };
 

@@ -38,6 +38,7 @@ document.addEventListener("DOMContentLoaded", async() => {
     const updateStudents = (studentId, newCardId) => {
         const selectedCramSchool = cramSchoolSelection.value;
         const curr = students.find(s => s.cramSchoolName === selectedCramSchool).studentInfos.find(s => s.studentId === studentId);
+        console.log(`curr = ${curr} ,currJson = ${JSON.stringify(curr)}`);
         curr.cardId = newCardId;
         curr.cardIdSet = !!newCardId;
     }
