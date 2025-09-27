@@ -30,14 +30,24 @@ document.addEventListener("DOMContentLoaded", async() => {
     // Fetching students data ...
     const students = await getStudentList(email, password);
 
+
+
     const cardIdRegistrationModal = document.getElementById('cardId_registration_modal');
     const cramSchoolSelection = document.getElementById('cramSchoolSelection');
+
+    const updateStudents = (studentId, newCardId) => {
+        const selectedCramSchool = cramSchoolSelection.value;
+        const curr = students.filter(s => s.cramSchoolName === selectedCramSchool).studentInfos.filter(s => s.studentId === studentId);
+        curr.cardId = newCardId;
+        curr.cardIdSet = !!newCardId;
+    }
+
     const studentSelection = document.getElementById('studentSelection');
     const cramSchools = [...students].map(s => s.cramSchoolName);
     cramSchoolSelection.innerHTML = `<option>校舎を選択してください</option>${cramSchools.map(name => `<option value=${name}>${name}</option>`).join('')}`;
     const createOptionsFromStudentInfos = (studentInfos) => {
         const studentPart = studentInfos.map(studentInfo =>
-            `<option id=option_${studentInfo.studentId} value='${studentInfo.studentName}' data-card-id=${studentInfo.cardId} data-student-id=${studentInfo.studentId} class=${studentInfo.cardId ? "text-success" : "text-danger"}>${studentInfo.studentName} ${studentInfo.cardId ? '設定ずみ' : '未設定' } ${studentInfo.cardId}</option>`
+            `<option id=option_${studentInfo.studentId} value='${studentInfo.studentId}' data-student-name=${studentInfo.studentName} data-card-id=${studentInfo.cardId} data-student-id=${studentInfo.studentId} class=${studentInfo.cardId ? "text-success" : "text-danger"}>${studentInfo.studentName} ${studentInfo.cardId ? '設定ずみ' : '未設定' } ${studentInfo.cardId}</option>`
         ).join('');
 
         return `<option class="text-danger">生徒を選択してください</option>${studentPart}`;
@@ -58,11 +68,11 @@ document.addEventListener("DOMContentLoaded", async() => {
         });
 
         studentSelection.addEventListener('change', async(e) => {
-            const studentName = e.target.value;
-            if (!studentName) return; // excludes guide option
-
-            const studentId = e.target.dataset.studentId;
-            const cardId = e.target.dataset.cardId;
+            const studentId = e.target.value;
+            if (!studentId) return; // excludes guide option
+            const selectedOption = document.getElementById(`option_${studentId}`);
+            const studentName = selectedOption.dataset.studentName;
+            const cardId = selectedOption.dataset.cardId;
             if (confirm(`${studentName}にカードを紐づけますか？\n紐づけるつもりならカードをかざしてください。`)) {
                 const ndefReader = new NDEFReader();
                 await ndefReader.scan();
@@ -70,11 +80,12 @@ document.addEventListener("DOMContentLoaded", async() => {
                    playSound(AUDIO.success);
                    if (serialNumber && cardId !== serialNumber) {
                        if (confirm(`${studentName}に\nカードID: ${serialNumber}\nを紐づけますか？`)){
-                           const data = {studentId, cardId: serialNumber};
+                           const data = {email, password, studentId, cardId: serialNumber};
                            const success = await doPost(SET_STUDENT_CARDID_END_POINT, data);
                            if (success) {
                                playSound(AUDIO.success);
                                //TODO: fix this
+                               updateStudents(studentId, serialNumber);
                                const relatedOption = document.getElementById(`option_${studentId}`);
                                relatedOption.outerHTML = `<option id=option_${studentId} value='${studentName}' data-card-id=${serialNumber} data-student-id=${studentId} "text-success" >${studentName}  '設定ずみ'  ${serialNumber}</option>`
                                alert(`${studentName}にカードID${serialNumber}を正常に紐づけられました.`);
