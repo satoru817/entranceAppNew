@@ -21,7 +21,7 @@ if ("serviceWorker" in navigator) {
 document.addEventListener("DOMContentLoaded", async() => {
     userLogin();
     const cardIdScanBtn = document.getElementById('cardIdScan');
-    
+
     cardIdScanBtn.addEventListener('click', (e) => {
         //まずリーダーを破壊
         ndefReader = null;
@@ -177,7 +177,7 @@ document.addEventListener("DOMContentLoaded", async() => {
             if (data.success) {
                 const action = data.type === "ENTRY" ? "入室" : "退室";
                 updateStatus(
-                    `<h2>${data.studentName}さん</h2>
+                    `<h2>${data.student.name}さん</h2>
                 <p>${action}を記録しました</p>
                 <p>${new Date().toLocaleTimeString()}</p>
                 ${
