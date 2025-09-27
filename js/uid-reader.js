@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", async() => {
         console.log(`_students = ${_students} ${JSON.stringify(_students)}`);
         const _student = _students.studentInfos.find(s => s.studentId === studentId);
         console.log(`_student = ${_student}`);
-        const curr = students.find(s => s.cramSchoolName === selectedCramSchoolName).studentInfos.find(s => s.studentId === studentId);
+        const curr = students.find(s => s.cramSchoolName === selectedCramSchoolName).studentInfos.find(s => Number(s.studentId) === Number(studentId));
         console.log(`curr = ${curr} ,currJson = ${JSON.stringify(curr)}`);
         curr.cardId = newCardId;
         curr.cardIdSet = !!newCardId;
