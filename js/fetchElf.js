@@ -19,6 +19,7 @@ const _fetch = async(url, method, data, callIfFailed) => {
         const response = await fetch(url, requestBody);
         if (!response.ok) {
             throw new Error(`Response Status: ${response.status}`);
+            return;
         }
 
         const contentType = response.headers.get('Content-Type');
@@ -42,6 +43,7 @@ const _fetch = async(url, method, data, callIfFailed) => {
         if (callIfFailed) {
             callIfFailed();
         }
+        return;
     }
 }
 

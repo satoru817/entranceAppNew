@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", async() => {
     cramSchoolSelection.innerHTML = `<option>校舎を選択してください</option>${cramSchools.map(name => `<option value=${name}>${name}</option>`).join('')}`;
     const createOptionsFromStudentInfos = (studentInfos) => {
         const studentPart = studentInfos.map(studentInfo =>
-            `<option id=option_${studentInfo.studentId} value='${studentInfo.studentId}' data-student-name=${studentInfo.studentName} data-card-id=${studentInfo.cardId} data-student-id=${studentInfo.studentId} class=${studentInfo.cardId ? "text-success" : "text-danger"}>${studentInfo.studentName} ${studentInfo.cardId ? '設定ずみ' : '未設定' } ${studentInfo.cardId}</option>`
+            `<option id=option_${studentInfo.studentId} value='${studentInfo.studentId}' data-student-name='${studentInfo.studentName}' data-card-id='${studentInfo.cardId}' data-student-id=${studentInfo.studentId} class=${studentInfo.cardId ? "text-success" : "text-danger"}>${studentInfo.studentName} ${studentInfo.cardId ? '設定ずみ' : '未設定' } ${studentInfo.cardId}</option>`
         ).join('');
 
         return `<option class="text-danger">生徒を選択してください</option>${studentPart}`;
@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", async() => {
             }
         });
 
-        studentSelection.addEventListener('change', async(e) => {
+        studentSelection.addEventListener('change', async (e) => {
             const studentId = e.target.value;
             if (!studentId) return; // excludes guide option
             const selectedOption = document.getElementById(`option_${studentId}`);
@@ -82,18 +82,12 @@ document.addEventListener("DOMContentLoaded", async() => {
                        if (confirm(`${studentName}に\nカードID: ${serialNumber}\nを紐づけますか？`)){
                            const data = {email, password, studentId, cardId: serialNumber};
                            const success = await doPost(SET_STUDENT_CARDID_END_POINT, data);
-                           if (success) {
-                               playSound(AUDIO.success);
-                               //TODO: fix this
-                               updateStudents(studentId, serialNumber);
-                               const relatedOption = document.getElementById(`option_${studentId}`);
-                               relatedOption.outerHTML = `<option id=option_${studentId} value='${studentName}' data-card-id=${serialNumber} data-student-id=${studentId} "text-success" >${studentName}  '設定ずみ'  ${serialNumber}</option>`
-                               alert(`${studentName}にカードID${serialNumber}を正常に紐づけられました.`);
-                           }
-                           else {
-                               playSound(AUDIO.error);
-                               alert("カードの紐付けに失敗しました");
-                           }
+                           // if failed then doPost will early-return;
+                           playSound(AUDIO.success);
+                           updateStudents(studentId, serialNumber);
+                           const relatedOption = document.getElementById(`option_${studentId}`);
+                           relatedOption.outerHTML = `<option id=option_${studentId} value='${studentName}' data-card-id=${serialNumber} data-student-id=${studentId} "text-success" >${studentName}  '設定ずみ'  ${serialNumber}</option>`
+                           alert(`${studentName}にカードID${serialNumber}を正常に紐づけられました.`);
                        }
                    }
                    else {
