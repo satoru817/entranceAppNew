@@ -22,6 +22,35 @@ document.addEventListener("DOMContentLoaded", async() => {
     userLogin();
     const cardIdScanBtn = document.getElementById('cardIdScan');
 
+
+    // 要素の取得
+    const statusBox = document.getElementById("status");
+    const toggleScanButton = document.getElementById("toggleScanButton");
+    const manualButton = document.getElementById("manualButton");
+    const scanStatus = document.getElementById("scanStatus");
+
+    // 変数の初期化
+    let isReading = false;
+    let timeoutId = null;
+    let ndefReader = null;
+    let isScanning = true;
+
+    /**
+     * NFC読み取りを停止する
+     */
+    function stopNfcScan() {
+        if (ndefReader) {
+            try {
+                // Web NFC APIには明示的なstop()メソッドがないため、
+                // リーダーを破棄してイベントリスナーをクリア
+                ndefReader = null;
+                console.log("NFCスキャン停止");
+            } catch (error) {
+                console.error("NFCスキャン停止エラー:", error);
+            }
+        }
+    }
+
     cardIdScanBtn.addEventListener('click', (e) => {
         //まずリーダーを破壊
         ndefReader = null;
@@ -38,24 +67,12 @@ document.addEventListener("DOMContentLoaded", async() => {
         });
         userLogin();
     })
-    // 要素の取得
-    const statusBox = document.getElementById("status");
-    const toggleScanButton = document.getElementById("toggleScanButton");
-    const manualButton = document.getElementById("manualButton");
-    const scanStatus = document.getElementById("scanStatus");
-
-    // 変数の初期化
-    let isReading = false;
-    let timeoutId = null;
-    let ndefReader = null;
-    let isScanning = true;
-
     // スキャン状態のタイムアウト
     const SCAN_TIMEOUT = 5000;
-    const ERROR_TIMEOUT = 3000;
+    const ERROR_TIMEOUT = 1000;
 
     // 自動的にNFCスキャンを開始しないでおこう
-    //startNfcScan();
+    startNfcScan();
 
     /**
      * NFC読み取りを開始する
@@ -76,7 +93,7 @@ document.addEventListener("DOMContentLoaded", async() => {
             toggleScanButton.textContent = "一時停止";
 
             // 古いリーダーを破棄
-            ndefReader = null;
+            stopNfcScan();
 
             // 新しいリーダーを作成
             ndefReader = new NDEFReader();
@@ -127,6 +144,7 @@ document.addEventListener("DOMContentLoaded", async() => {
             startNfcScan();
         } else {
             toggleScanButton.textContent = "スキャン再開";
+            stopNfcScan(); // 適切にスキャンを停止
             updateStatus("NFCスキャンは一時停止しています", "");
             updateScanStatus("スキャン停止中", "inactive");
         }
@@ -222,4 +240,10 @@ document.addEventListener("DOMContentLoaded", async() => {
             startNfcScan();
         }
     });
+});
+
+// ページ離脱時のクリーンアップ
+window.addEventListener('beforeunload', () => {
+    stopNfcScan();
+    clearTimeout(timeoutId);
 });
