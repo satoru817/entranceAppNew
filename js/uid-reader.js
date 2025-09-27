@@ -70,10 +70,11 @@ document.addEventListener("DOMContentLoaded", async() => {
                    playSound(AUDIO.success);
                    if (serialNumber && cardId !== serialNumber) {
                        if (confirm(`${studentName}に\nカードID: ${serialNumber}\nを紐づけますか？`)){
-                           const data = {studentId, serialNumber};
+                           const data = {studentId, cardId};
                            const success = await doPost(SET_STUDENT_CARDID_END_POINT, data);
                            if (success) {
                                playSound(AUDIO.success);
+                               //TODO: fix this
                                const relatedOption = document.getElementById(`option_${studentId}`);
                                relatedOption.outerHTML = `<option id=option_${studentId} value='${studentName}' data-card-id=${serialNumber} data-student-id=${studentId} "text-success" >${studentName}  '設定ずみ'  ${serialNumber}</option>`
                                alert(`${studentName}にカードID${serialNumber}を正常に紐づけられました.`);

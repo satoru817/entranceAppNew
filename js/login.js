@@ -23,6 +23,9 @@ export const userLogin = () => {
         }
 
         loginModal.hide();
+        // clear out modal input field.
+        emailInput.value = '';
+        passwordInput.value = '';
     });
 
     loginModal.show();

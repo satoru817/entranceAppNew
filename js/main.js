@@ -21,7 +21,10 @@ if ("serviceWorker" in navigator) {
 document.addEventListener("DOMContentLoaded", async() => {
     userLogin();
     const cardIdScanBtn = document.getElementById('cardIdScan');
+    
     cardIdScanBtn.addEventListener('click', (e) => {
+        //まずリーダーを破壊
+        ndefReader = null;
         e.preventDefault();
         const loginModal = document.getElementById('login_modal');
         console.log(`loginModal = ${JSON.stringify(loginModal)}`);
