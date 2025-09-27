@@ -87,7 +87,7 @@ document.addEventListener("DOMContentLoaded", async() => {
                            playSound(AUDIO.success);
                            const data = {email, password, studentId, cardId: serialNumber};
                            const success = await doPost(SET_STUDENT_CARDID_END_POINT, data);
-                           console.log("success" + ${success});
+                           console.log(`success = ${success}`);
                            // if failed then doPost will early-return;
                            if (success) {
                                console.log("successの中にはいます");
