@@ -27,30 +27,20 @@ document.addEventListener("DOMContentLoaded", async() => {
     const params = getParams();
     const email = params.get('email');
     const password = params.get('password');
+    // Fetching students data ...
     const students = await getStudentList(email, password);
-    // public class StudentCardIdRegistrationDTO {
-    //     private String cramSchoolName;
-    //     private List<StudentInfo> studentInfos;
-    // }
-    // public class StudentInfo{
-    //     private Integer studentId;
-    //     private String studentName;
-    //     private String gradeStr;
-    //     private String cardId;
-    //     public boolean isCardIdSet() {
-    //         return cardId != null && !cardId.equals("");
-    //     }
-    // }
 
     const cardIdRegistrationModal = document.getElementById('cardId_registration_modal');
     const cramSchoolSelection = document.getElementById('cramSchoolSelection');
     const studentSelection = document.getElementById('studentSelection');
     const cramSchools = [...students].map(s => s.cramSchoolName);
-    cramSchoolSelection.innerHTML = cramSchools.map(name => `<option value=${name}>${name}</option>`).join('');
+    cramSchoolSelection.innerHTML = `<option>校舎を選択してください</option>${cramSchools.map(name => `<option value=${name}>${name}</option>`).join('')}`;
     const createOptionsFromStudentInfos = (studentInfos) => {
-        return studentInfos.map(studentInfo =>
+        const studentPart = studentInfos.map(studentInfo =>
             `<option id=option_${studentInfo.studentId} value='${studentInfo.studentName}' data-card-id=${studentInfo.cardId} data-student-id=${studentInfo.studentId} class=${studentInfo.cardId ? "text-success" : "text-danger"}>${studentInfo.studentName} ${studentInfo.cardId ? '設定ずみ' : '未設定' } ${studentInfo.cardId}</option>`
         ).join('');
+
+        return `<option class="text-danger">生徒を選択してください</option>${studentPart}`;
     }
 
     if (cramSchools.length === 1) {
@@ -59,23 +49,27 @@ document.addEventListener("DOMContentLoaded", async() => {
 
     cardIdRegistrationModal.addEventListener('show.bs.modal', (e) => {
         cramSchoolSelection.addEventListener('change', (e) => {
-            const selectedCramSchoolName = e.target.value;
-            console.log(`selected cramSchool = ${selectedCramSchoolName}`);
-            const relatedStudents = students.filter(dto => dto.cramSchoolName === selectedCramSchoolName)[0].studentInfos;
-            studentSelection.innerHTML = createOptionsFromStudentInfos(relatedStudents);
+            if (e.target.value) {
+                const selectedCramSchoolName = e.target.value;
+                console.log(`selected cramSchool = ${selectedCramSchoolName}`);
+                const relatedStudents = students.filter(dto => dto.cramSchoolName === selectedCramSchoolName)[0].studentInfos;
+                studentSelection.innerHTML = createOptionsFromStudentInfos(relatedStudents);
+            }
         });
 
         studentSelection.addEventListener('change', async(e) => {
             const studentName = e.target.value;
+            if (!studentName) return; // excludes guide option
+
             const studentId = e.target.dataset.studentId;
             const cardId = e.target.dataset.cardId;
             if (confirm(`${studentName}にカードを紐づけますか？\n紐づけるつもりならカードをかざしてください。`)) {
-               const ndefReader = new NDEFReader();
-               await ndefReader.scan();
-               ndefReader.addEventListener('reading', async ({serialNumber}) => {
+                const ndefReader = new NDEFReader();
+                await ndefReader.scan();
+                ndefReader.addEventListener('reading', async ({serialNumber}) => {
                    playSound(AUDIO.success);
                    if (serialNumber && cardId !== serialNumber) {
-                       if (confirm(`${studentName}にカードID${serialNumber}を紐づけますか？`)){
+                       if (confirm(`${studentName}に\nカードID: ${serialNumber}\nを紐づけますか？`)){
                            const data = {studentId, serialNumber};
                            const success = await doPost(SET_STUDENT_CARDID_END_POINT, data);
                            if (success) {
@@ -92,8 +86,7 @@ document.addEventListener("DOMContentLoaded", async() => {
                    else {
                        alert(`このカードID${_serialNumber}が既にこの生徒${studentName}と紐づいています。`);
                    }
-               });
-
+                }, {once: true});
             }
         });
     });
@@ -217,4 +210,4 @@ document.addEventListener("DOMContentLoaded", async() => {
 
     // 初期読み込み
     loadHistory();
-});
+}, {once: true});

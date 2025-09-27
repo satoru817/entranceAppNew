@@ -92,7 +92,7 @@ document.addEventListener("DOMContentLoaded", async() => {
                     clearTimeout(timeoutId);
                     timeoutId = setTimeout(() => {
                         isReading = false;
-                    }, 3000);
+                    }, SCAN_TIMEOUT);
                 }
             });
 
