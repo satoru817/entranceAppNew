@@ -5,16 +5,19 @@ body {
   padding: 0;
 }
 
-/* 遷移ボタン用スタイル */
-.navigation-button {
-  display: inline-block;
-  background-color: #6c757d;
-  color: white;
+.btn-shared {
   text-decoration: none;
   padding: 12px 24px;
   border-radius: 4px;
   margin: 8px;
   font-size: 16px;
+}
+
+/* 遷移ボタン用スタイル */
+.navigation-button {
+  display: inline-block;
+  background-color: #6c757d;
+  color: white;
 }
 
 .navigation-button:hover {
