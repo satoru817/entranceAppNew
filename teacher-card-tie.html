@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NFCカードUID読取</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        text-align: center;
+      }
+      .card {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px 0;
+        background-color: #f9f9f9;
+      }
+      .uid-display {
+        font-family: monospace;
+        font-size: 24px;
+        margin: 20px 0;
+        padding: 10px;
+        background-color: #eee;
+        border-radius: 4px;
+      }
+      .status {
+        margin: 10px 0;
+        font-weight: bold;
+      }
+      .success {
+        color: green;
+      }
+      .error {
+        color: red;
+      }
+      .reading {
+        color: blue;
+      }
+
+      .history {
+        text-align: left;
+        margin-top: 30px;
+        border-top: 1px solid #ddd;
+        padding-top: 20px;
+      }
+      .history-item {
+        padding: 8px;
+        border-bottom: 1px solid #eee;
+      }
+    </style>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
+    <script type="module" src="js/teacher-card-tie.js" defer></script>
+  </head>
+  <body>
+    <h1>講師NFCカードUID読取</h1>
+
+    <div class="card">
+      <button id="registrationBtn" class="btn btn-primary m-2">
+        UIDを講師に紐付け
+      </button>
+      <button id="backBtn" class="btn btn-warning m-2">前のページの戻る</button>
+    </div>
+  </body>
+</html>
