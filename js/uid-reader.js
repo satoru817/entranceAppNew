@@ -87,43 +87,62 @@ document.addEventListener(
       studentSelection.innerHTML = createOptionsFromStudentInfos(
         students[0].studentInfos
       );
+      selectedCramSchoolName = cramSchools[0];
     }
 
-    cardIdRegistrationModal.addEventListener("show.bs.modal", (e) => {
-      cramSchoolSelection.addEventListener("change", (e) => {
-        if (e.target.value) {
-          const _selectedCramSchoolName = e.target.value;
-          selectedCramSchoolName = _selectedCramSchoolName;
-          console.log(`selected cramSchool = ${_selectedCramSchoolName}`);
-          const relatedStudents = students.filter(
-            (dto) => dto.cramSchoolName === _selectedCramSchoolName
-          )[0].studentInfos;
-          studentSelection.innerHTML =
-            createOptionsFromStudentInfos(relatedStudents);
-        }
-      });
+    // ✅ Move event listeners OUTSIDE modal handler to prevent multiplication
+    cramSchoolSelection.addEventListener("change", (e) => {
+      if (e.target.value) {
+        const _selectedCramSchoolName = e.target.value;
+        selectedCramSchoolName = _selectedCramSchoolName;
+        console.log(`selected cramSchool = ${_selectedCramSchoolName}`);
+        const relatedStudents = students.filter(
+          (dto) => dto.cramSchoolName === _selectedCramSchoolName
+        )[0].studentInfos;
+        studentSelection.innerHTML =
+          createOptionsFromStudentInfos(relatedStudents);
+      }
+    });
 
-      studentSelection.addEventListener("change", async (e) => {
-        const studentId = e.target.value;
-        if (!studentId) return; // excludes guide option
-        const selectedOption = document.getElementById(`option_${studentId}`);
-        const studentName = selectedOption.dataset.studentName;
-        const cardId = selectedOption.dataset.cardId;
-        if (!("NDEFReader" in window)) {
-          alert("このブラウザはWeb NFCに対応していません。");
-          return;
-        }
+    let isScanning = false; // ✅ Prevent multiple simultaneous scans
 
-        if (
-          confirm(
-            `${studentName}にカードを紐づけますか？\n紐づけるつもりならOKボタンを押してからカードをかざしてください。`
-          )
-        ) {
-          const ndefReader = new NDEFReader();
+    studentSelection.addEventListener("change", async (e) => {
+      const studentId = e.target.value;
+      if (!studentId) return; // excludes guide option
+      const selectedOption = document.getElementById(`option_${studentId}`);
+      const studentName = selectedOption.dataset.studentName;
+      const cardId = selectedOption.dataset.cardId;
+
+      if (!("NDEFReader" in window)) {
+        alert("このブラウザはWeb NFCに対応していません。");
+        return;
+      }
+
+      if (isScanning) {
+        alert("既にカード読み取り中です。");
+        return;
+      }
+
+      if (
+        confirm(
+          `${studentName}にカードを紐づけますか？\n紐づけるつもりならOKボタンを押してからカードをかざしてください。`
+        )
+      ) {
+        isScanning = true;
+        const ndefReader = new NDEFReader();
+
+        try {
           await ndefReader.scan();
+
+          // ✅ Use AbortController to ensure clean cleanup
+          const abortController = new AbortController();
+
           ndefReader.addEventListener(
             "reading",
             async ({ serialNumber }) => {
+              abortController.abort(); // Stop listening after first read
+              isScanning = false;
+
               if (!!serialNumber && cardId !== serialNumber) {
                 if (
                   confirm(
@@ -159,6 +178,8 @@ document.addEventListener(
                       `${studentName}にカードID\n${serialNumber}\nを紐づけるのに失敗しました`
                     );
                   }
+                } else {
+                  isScanning = false;
                 }
               } else {
                 alert(
@@ -166,10 +187,14 @@ document.addEventListener(
                 );
               }
             },
-            { once: true }
+            { once: true, signal: abortController.signal }
           );
+        } catch (error) {
+          isScanning = false;
+          console.error("NFC scan error:", error);
+          alert("カード読み取りエラーが発生しました。");
         }
-      });
+      }
     });
 
     registrationBtn.addEventListener("click", () => {
