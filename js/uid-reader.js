@@ -1,4 +1,3 @@
-import { doScan } from "./scanElf.js";
 import { doPost } from "./fetchElf.js";
 import {
   GET_STUDENT_API_END_POINT,
@@ -104,7 +103,6 @@ document.addEventListener(
       }
     });
 
-    let isScanning = false; // ✅ Prevent multiple simultaneous scans
     let ndefReader = null; // ✅ Reuse single NDEFReader instance
     let currentListener = null; // ✅ Track current listener to remove it
 
@@ -120,18 +118,11 @@ document.addEventListener(
         return;
       }
 
-      if (isScanning) {
-        alert("既にカード読み取り中です。");
-        return;
-      }
-
       if (
         confirm(
           `${studentName}にカードを紐づけますか？\n紐づけるつもりならOKボタンを押してからカードをかざしてください。`
         )
       ) {
-        isScanning = true;
-
         // ✅ Remove previous listener if exists
         if (currentListener) {
           ndefReader.removeEventListener("reading", currentListener);
@@ -143,7 +134,6 @@ document.addEventListener(
           try {
             await ndefReader.scan();
           } catch (error) {
-            isScanning = false;
             console.error("NFC scan error:", error);
             alert("カード読み取りエラーが発生しました。");
             return;
@@ -152,7 +142,6 @@ document.addEventListener(
 
         // ✅ Define listener as a named function so we can remove it later
         currentListener = async ({ serialNumber }) => {
-          isScanning = false;
           ndefReader.removeEventListener("reading", currentListener);
 
           if (!!serialNumber && cardId !== serialNumber) {
@@ -187,8 +176,6 @@ document.addEventListener(
                   `${studentName}にカードID\n${serialNumber}\nを紐づけるのに失敗しました`
                 );
               }
-            } else {
-              isScanning = false;
             }
           } else {
             alert(

@@ -10,7 +10,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   const registrationBtn = document.getElementById("registrationBtn");
   const backBtn = document.getElementById("backBtn");
 
-  let isScanning = false;
   let ndefReader = null;
   let currentListener = null;
 
@@ -20,17 +19,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
-    if (isScanning) {
-      alert("カード読み取り中です");
-      return;
-    }
-
     if (
       confirm(
         `${email}にカードUIDを紐付けますか？\nYES => OKボタンを押してからカードをかざしてください`
       )
     ) {
-      isScanning = true;
 
       if (currentListener) {
         ndefReader.removeEventListener("reading", currentListener);
@@ -41,14 +34,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         try {
           await ndefReader.scan();
         } catch (error) {
-          isScanning = false;
           alert("カード読み取りエラー" + error);
           return;
         }
       }
 
       currentListener = async ({ serialNumber }) => {
-        isScanning = false;
         ndefReader.removeEventListener("reading", currentListener);
 
         if (!!serialNumber) {
