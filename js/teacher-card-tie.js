@@ -9,15 +9,48 @@ document.addEventListener("DOMContentLoaded", async () => {
   const password = params.get("password");
   const registrationBtn = document.getElementById("registrationBtn");
   const backBtn = document.getElementById("backBtn");
+
+  let isScanning = false;
+  let ndefReader = null;
+  let currentListener = null;
+
   registrationBtn.addEventListener("click", async () => {
+    if (!("NDEFReader" in window)) {
+      alert("このブラウザはWeb NFCに対応していません。");
+      return;
+    }
+
+    if (isScanning) {
+      alert("カード読み取り中です");
+      return;
+    }
+
     if (
       confirm(
         `${email}にカードUIDを紐付けますか？\nYES => OKボタンを押してからカードをかざしてください`
       )
     ) {
-      const ndefReader = new NDEFReader();
-      await ndefReader.scan();
-      ndefReader.addEventListener("reading", async ({ serialNumber }) => {
+      isScanning = true;
+
+      if (currentListener) {
+        ndefReader.removeEventListener("reading", currentListener);
+      }
+
+      if (!ndefReader) {
+        ndefReader = new NDEFReader();
+        try {
+          await ndefReader.scan();
+        } catch (error) {
+          isScanning = false;
+          alert("カード読み取りエラー" + error);
+          return;
+        }
+      }
+
+      currentListener = async ({ serialNumber }) => {
+        isScanning = false;
+        ndefReader.removeEventListener("reading", currentListener);
+
         if (!!serialNumber) {
           playSound(AUDIO.beep);
           if (
@@ -39,7 +72,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
           }
         }
-      });
+      };
+
+      ndefReader.addEventListener("reading", currentListener);
     }
   });
 

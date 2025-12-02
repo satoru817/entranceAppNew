@@ -105,8 +105,8 @@ document.addEventListener(
     });
 
     let isScanning = false; // ✅ Prevent multiple simultaneous scans
-    let currentAbortController = null; // ✅ Track current scan to abort it if needed
     let ndefReader = null; // ✅ Reuse single NDEFReader instance
+    let currentListener = null; // ✅ Track current listener to remove it
 
     studentSelection.addEventListener("change", async (e) => {
       const studentId = e.target.value;
@@ -132,79 +132,73 @@ document.addEventListener(
       ) {
         isScanning = true;
 
-        // ✅ Abort any previous scan operation
-        if (currentAbortController) {
-          currentAbortController.abort();
+        // ✅ Remove previous listener if exists
+        if (currentListener) {
+          ndefReader.removeEventListener("reading", currentListener);
         }
 
-        // ✅ Create NDEFReader only once
+        // ✅ Create NDEFReader and start scan only once
         if (!ndefReader) {
           ndefReader = new NDEFReader();
+          try {
+            await ndefReader.scan();
+          } catch (error) {
+            isScanning = false;
+            console.error("NFC scan error:", error);
+            alert("カード読み取りエラーが発生しました。");
+            return;
+          }
         }
 
-        try {
-          await ndefReader.scan();
+        // ✅ Define listener as a named function so we can remove it later
+        currentListener = async ({ serialNumber }) => {
+          isScanning = false;
+          ndefReader.removeEventListener("reading", currentListener);
 
-          // ✅ Use AbortController to ensure clean cleanup
-          currentAbortController = new AbortController();
-
-          ndefReader.addEventListener(
-            "reading",
-            async ({ serialNumber }) => {
-              currentAbortController.abort(); // Stop listening after first read
-              isScanning = false;
-
-              if (!!serialNumber && cardId !== serialNumber) {
-                if (
-                  confirm(
-                    `${studentName}に\nカードID: ${serialNumber}\nを紐づけますか？`
-                  )
-                ) {
-                  playSound(AUDIO.success);
-                  const data = {
-                    email,
-                    password,
-                    studentId,
-                    cardId: serialNumber,
-                  };
-                  const success = await doPost(
-                    SET_STUDENT_CARDID_END_POINT,
-                    data
-                  );
-                  console.log(`success = ${success}`);
-                  // if failed then doPost will early-return;
-                  if (success) {
-                    console.log("successの中にはいます");
-                    updateStudents(studentId, serialNumber);
-                    const relatedOption = document.getElementById(
-                      `option_${studentId}`
-                    );
-                    relatedOption.outerHTML = `<option id=option_${studentId} value='${studentId}' data-student-name='${studentName}' data-card-id='${serialNumber}' data-student-id=${studentId} class=text-success >${studentName}  '設定ずみ'  ${serialNumber}</option>`;
-                    alert(
-                      `${studentName}にカードID${serialNumber}を正常に紐づけられました.`
-                    );
-                  } else {
-                    console.log("successの中にいません。");
-                    alert(
-                      `${studentName}にカードID\n${serialNumber}\nを紐づけるのに失敗しました`
-                    );
-                  }
-                } else {
-                  isScanning = false;
-                }
-              } else {
+          if (!!serialNumber && cardId !== serialNumber) {
+            if (
+              confirm(
+                `${studentName}に\nカードID: ${serialNumber}\nを紐づけますか？`
+              )
+            ) {
+              playSound(AUDIO.success);
+              const data = {
+                email,
+                password,
+                studentId,
+                cardId: serialNumber,
+              };
+              const success = await doPost(SET_STUDENT_CARDID_END_POINT, data);
+              console.log(`success = ${success}`);
+              // if failed then doPost will early-return;
+              if (success) {
+                console.log("successの中にはいます");
+                updateStudents(studentId, serialNumber);
+                const relatedOption = document.getElementById(
+                  `option_${studentId}`
+                );
+                relatedOption.outerHTML = `<option id=option_${studentId} value='${studentId}' data-student-name='${studentName}' data-card-id='${serialNumber}' data-student-id=${studentId} class=text-success >${studentName}  '設定ずみ'  ${serialNumber}</option>`;
                 alert(
-                  `このカードID${serialNumber}が既にこの生徒${studentName}と紐づいています。`
+                  `${studentName}にカードID${serialNumber}を正常に紐づけられました.`
+                );
+              } else {
+                console.log("successの中にいません。");
+                alert(
+                  `${studentName}にカードID\n${serialNumber}\nを紐づけるのに失敗しました`
                 );
               }
-            },
-            { once: true, signal: currentAbortController.signal }
-          );
-        } catch (error) {
-          isScanning = false;
-          console.error("NFC scan error:", error);
-          alert("カード読み取りエラーが発生しました。");
-        }
+            } else {
+              isScanning = false;
+            }
+          } else {
+            alert(
+              `このカードID${serialNumber}が既にこの生徒${studentName}と紐づいています。`
+            );
+          }
+        };
+
+        // ✅ Add the listener to ndefReader
+        ndefReader.addEventListener("reading", currentListener);
       }
     });
 
