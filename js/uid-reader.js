@@ -105,6 +105,8 @@ document.addEventListener(
     });
 
     let isScanning = false; // ✅ Prevent multiple simultaneous scans
+    let currentAbortController = null; // ✅ Track current scan to abort it if needed
+    let ndefReader = null; // ✅ Reuse single NDEFReader instance
 
     studentSelection.addEventListener("change", async (e) => {
       const studentId = e.target.value;
@@ -129,18 +131,27 @@ document.addEventListener(
         )
       ) {
         isScanning = true;
-        const ndefReader = new NDEFReader();
+
+        // ✅ Abort any previous scan operation
+        if (currentAbortController) {
+          currentAbortController.abort();
+        }
+
+        // ✅ Create NDEFReader only once
+        if (!ndefReader) {
+          ndefReader = new NDEFReader();
+        }
 
         try {
           await ndefReader.scan();
 
           // ✅ Use AbortController to ensure clean cleanup
-          const abortController = new AbortController();
+          currentAbortController = new AbortController();
 
           ndefReader.addEventListener(
             "reading",
             async ({ serialNumber }) => {
-              abortController.abort(); // Stop listening after first read
+              currentAbortController.abort(); // Stop listening after first read
               isScanning = false;
 
               if (!!serialNumber && cardId !== serialNumber) {
@@ -187,7 +198,7 @@ document.addEventListener(
                 );
               }
             },
-            { once: true, signal: abortController.signal }
+            { once: true, signal: currentAbortController.signal }
           );
         } catch (error) {
           isScanning = false;
